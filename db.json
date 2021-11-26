@@ -1,0 +1,22 @@
+{
+  "persons": [
+    {
+      "id": "1",
+      "name": "Dmitri",
+      "age": 30,
+      "hobbies":["fishing","football"] 
+    },
+    {
+      "id": "2",
+      "name": "Nicolay",
+      "age": 35,
+      "hobbies":["table tennis","walking","table games"] 
+    },
+    {
+      "id": "3",
+      "name": "Olga",
+      "age": 25,
+      "hobbies":["shoping","cinema"] 
+    }
+  ]
+}
