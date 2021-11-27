@@ -14,7 +14,7 @@ const server = http.createServer((req, res) => {
   stream.on('data', (chunk) => (data += chunk));
   let urlRequest = url.parse(req.url, true);
   stream.on('end', () => {
-    console.log('data',data)
+    // console.log('data', data);
     let persons = JSON.parse(data).persons;
 
     if (req.method == 'GET') {
@@ -38,9 +38,7 @@ const server = http.createServer((req, res) => {
         }
         // });
       }
-    }
-     
-    else if (req.method == 'POST') {
+    } else if (req.method == 'POST') {
       let body = '';
       req.on('data', (chunk) => (body += chunk.toString()));
 
@@ -54,20 +52,77 @@ const server = http.createServer((req, res) => {
           age: params.age,
           hobbies: params.hobbies.split(','),
         };
-        persons.push(newPerson)
-        persons= {persons:[...persons]}
+        persons.push(newPerson);
+        persons = { persons: [...persons] };
         persons = JSON.stringify(persons);
-        let writeStream = fs.createWriteStream('./db.json',{flags:'w'})
-        writeStream.write(persons)
+        let writeStream = fs.createWriteStream('./db.json', { flags: 'w' });
+        writeStream.write(persons);
         newPerson = JSON.stringify(newPerson);
         res.end(newPerson);
       });
-
     } else if (req.method == 'PUT') {
+      if (urlRequest.pathname.match(/^\/person\/\d+/)) {
+        let personId = urlRequest.pathname.match(/\d+/)[0];
+        let body = '';
+        req.on('data', (chunk) => (body += chunk.toString()));
+
+        req.on('end', (chunk) => {
+          let params = parse(body);
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'application/json');
+
+          let editPerson = {
+            id: personId,
+            name: params.name,
+            age: params.age,
+            hobbies: params.hobbies.split(','),
+          };
+          persons.forEach((person, index) => {
+            if (person.id === personId) {
+              persons[index] = editPerson;
+            }
+          });
+          persons = { persons: [...persons] };
+          persons = JSON.stringify(persons);
+          let writeStream = fs.createWriteStream('./db.json', { flags: 'w' });
+          writeStream.write(persons);
+          editPerson = JSON.stringify(editPerson);
+          res.end(editPerson);
+        });
+      } else {
+        res.statusCode = 400;
+        res.end(`user's id invalid`);
+      }
     } else if (req.method == 'DELETE') {
+      if (urlRequest.pathname.match(/^\/person\/\d+/)) {
+        let personId = urlRequest.pathname.match(/\d+/)[0];
+        let deletePerson = persons.find((person) => person.id === personId);
+
+        if (deletePerson) {
+          // console.log('personId',persons.filter((person) => person.id !== personId));
+          persons = persons.filter((person) => person.id !== personId);
+          persons = { persons: [...persons] };
+          persons = JSON.stringify(persons);
+          let writeStream = fs.createWriteStream('./db.json', { flags: 'w' });
+          writeStream.write(persons);
+
+          res.statusCode = 204;
+          res.setHeader('Content-Type', 'application/json');
+          deletePerson = JSON.stringify(deletePerson);
+          res.end(deletePerson);
+          stream.on('error', (error) => console.log('Error', error.message));
+        } else {
+          res.statusCode = 404;
+          res.end(`user with id ${personId} isn't finded`);
+        }
+        // });
+      } else {
+        res.statusCode = 400;
+        res.end(`user's id invalid`);
+      }
     }
   });
-  stream.on('error', (error) => console.log('Error', error.message))
+  stream.on('error', (error) => console.log('Error', error.message));
 
   // res.end('<h1>Hello, world!</h1>');
 });
