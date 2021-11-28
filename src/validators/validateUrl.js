@@ -7,7 +7,7 @@ function validateUrl(url){
       return { isValid: false, message: 'id is not uuid', statusCode: 404 };
     }
   } else {
-    return { isValid: false, message: 'url is incorrect', statusCode: 500 };
+    return { isValid: false, message: 'url is incorrect', statusCode: 404 };
   }
   return { isValid: true, message: 'url is valid' };
 };

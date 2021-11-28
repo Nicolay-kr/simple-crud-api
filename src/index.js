@@ -4,8 +4,8 @@ const fs = require('fs');
 const url = require('url');
 const { v4: uuidv4 } = require('uuid');
 const { parse } = require('querystring');
-const { validateUrl } = require('./validateUrl');
-const { validatePerson } = require('./validatePerson');
+const { validateUrl } = require('./validators/validateUrl');
+const { validatePerson } = require('./validators/validatePerson');
 
 const port = process.env.PORT || 3000;
 
@@ -138,7 +138,10 @@ const server = http.createServer((req, res) => {
       res.end(`${currentUrl.message}`);
     }
   });
-  stream.on('error', (error) => console.log('Error', error.message));
+  stream.on('error', (error) => {
+    res.statusCode = 500;
+    res.end('Error', error.message);
+  });
 });
 
 server.listen(port, () => {
