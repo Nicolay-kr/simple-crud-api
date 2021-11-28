@@ -12,11 +12,9 @@ const port = process.env.PORT || 3000;
 const server = http.createServer((req, res) => {
   let data = '';
   let stream = fs.createReadStream('./db.json');
-  // stream.pipe(fs.createWriteStream('./db.json',{flags:'r+'}));
   stream.on('data', (chunk) => (data += chunk));
   let urlRequest = url.parse(req.url, true);
   stream.on('end', () => {
-    // console.log('data', data);
     let persons = JSON.parse(data).persons;
     let currentUrl = validateUrl(urlRequest.pathname);
     if (currentUrl.isValid) {
@@ -147,3 +145,5 @@ const server = http.createServer((req, res) => {
 server.listen(port, () => {
   console.log(`Server running at port ${port}`);
 });
+
+module.exports = {server}
