@@ -10,10 +10,9 @@
 **Usage example:**
 
 1. To run the server in development mode from the command line use `"npm run start:dev"` command.
-2. To run the server in production mode from the command line use `"npm run start:prod"` command.
+2. To run the server in production mode from the command line use `"npm run start:build"` command.
 3. To run the tests from the command line use next commands:
 
-- `"npm run start:test"` to start separate server for testing on 4000 port;
 - `"npm run test"` in another terminal to run tests (when the server is running on port 4000).
 
 For cheking API  you can use Postman https://www.postman.com/
